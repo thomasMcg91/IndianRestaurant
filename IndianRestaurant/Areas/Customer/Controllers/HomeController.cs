@@ -6,22 +6,35 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using IndianRestaurant.Models;
+using IndianRestaurant.Data;
+using IndianRestaurant.Models.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace IndianRestaurant.Controllers
 {
     [Area("Customer")]
     public class HomeController : Controller
     {
+        //readonly property allows value to be genertated at runtime
+        private readonly ApplicationDbContext _db;
+
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext db)
         {
-            _logger = logger;
+            _db = db;
         }
 
-        public IActionResult Index()
+        public async Task <IActionResult> Index()
         {
-            return View();
+            IndexViewModel IndexVM = new IndexViewModel()
+            {
+                MenuItems = await _db.MenuItem.Include(w => w.Category).Include(d => d.SubCategory).ToListAsync(),
+                Categories = await _db.Category.ToListAsync(),
+                Coupons = await _db.Coupon.Where(s=> s.IsActivated).ToListAsync(),
+            };
+
+            return View(IndexVM);
         }
 
         public IActionResult Privacy()
