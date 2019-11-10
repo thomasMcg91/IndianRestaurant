@@ -4,11 +4,11 @@
 
 <div class="backgroundWhite container">
     <ul id="menu-filters" class="menu-filter-list list-incline text-center">
-        <li class="filter active btn btn-secondary m1-1" data-filter="menu-restaurant">Show all</li>
+        <li class="filter active btn btn-secondary m1-1" data-word=".menu-restaurant">Show all</li>
 
         @foreach(var item in Model.Categories)
         {
-            <li class="filter m1-1 mr-1" data-filter=".@item.Name.Replace(" ", string.Empty)">@item.Name</li>
+            <li class=" filter m1-1 mr-1" data-word=".@item.Name.Replace(" ", string.Empty)">@item.Name</li>
         }
     </ul>
 </div> 
@@ -60,3 +60,32 @@
         </div>
     }
 </div>
+
+@section scripts {
+<script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+        crossorigin="anonymous"></script>
+
+<script>
+    //retrieve where we will be toggling 
+    var posts = $('.post');
+
+    (function ($) {
+        //everytime menu iten is clicked we want to trigger function
+        $("#menu-filters li").click(function () {
+            //remove css classes so element is not active and then add the class which is selecyed
+            $("#menu-filters li").removeClass('active btn btn-secondary');
+            $(this).addClass('active btn btn-secondary');
+
+            var selectedFilter = $(this).data("word");
+
+            $(".menu-restaurant").fadeOut();
+
+            setTimeout(function () {
+                $(selectedFilter).slideDown();
+            }, 300);
+        });
+    })(jQuery);
+
+</script>
+}
