@@ -20,6 +20,9 @@ namespace IndianRestaurant.Controllers
 
         private readonly ILogger<HomeController> _logger;
 
+        [BindProperty]
+        public MenuItemViewModel MenuItemVM { get; set; }
+
         public HomeController(ApplicationDbContext db)
         {
             _db = db;
@@ -35,6 +38,15 @@ namespace IndianRestaurant.Controllers
             };
 
             return View(IndexVM);
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            var menuItemFromDb = await _db.MenuItem.Include(m => m.Category).Include(m => m.SubCategory)
+               .Where(m => m.Id == id).FirstOrDefaultAsync();
+
+
+            return View(menuItemFromDb);
         }
 
         public IActionResult Privacy()
